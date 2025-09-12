@@ -14,6 +14,7 @@ import contract.Contract;
 import service.PayrollService;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class Main {
 
@@ -54,7 +55,7 @@ public class Main {
         MeetingRoom room = new MeetingRoom("Conference Room A", 12);
         company.setMeetingRooms(new MeetingRoom[]{room});
 
-        room.bookRoom();
+        room.schedule(LocalDateTime.of(2025, 9, 12, 18, 30));
 
         // Client & Contract
         Client client = new Client("Acme Corp", "Retail");

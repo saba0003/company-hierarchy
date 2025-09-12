@@ -3,7 +3,7 @@ package company.employee;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class Manager extends Employee {
+public class Manager extends Employee implements Reportable {
 
     private int teamSize;
 
@@ -22,7 +22,12 @@ public class Manager extends Employee {
 
     @Override
     public void conductWork() {
-        System.out.println(getFullName() + " is managing a team of " + teamSize + " people");
+        System.out.println(getFullName() + " is yelling at a team of " + teamSize + " people");
+    }
+
+    @Override
+    public String generateReport() {
+        return "Manager " + getFullName() + " oversees " + teamSize + " employees.";
     }
 
     @Override

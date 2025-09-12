@@ -1,6 +1,10 @@
 package company;
 
-public class MeetingRoom {
+import company.employee.Identifiable;
+
+import java.time.LocalDateTime;
+
+public class MeetingRoom implements Identifiable, Schedulable {
 
     private String roomName;
     private int capacity;
@@ -8,10 +12,6 @@ public class MeetingRoom {
     public MeetingRoom(String roomName, int capacity) {
         this.roomName = roomName;
         this.capacity = capacity;
-    }
-
-    public void bookRoom() {
-        System.out.println("Room " + roomName + " booked for " + capacity + " people.");
     }
 
     public String getRoomName() {
@@ -31,7 +31,17 @@ public class MeetingRoom {
     }
 
     @Override
+    public String getIdentifier() {
+        return "Room " + roomName;
+    }
+
+    @Override
+    public void schedule(LocalDateTime dateAndTime) {
+        System.out.println("Meeting room " + roomName + " scheduled for " + dateAndTime + " for " + capacity + " people.");
+    }
+
+    @Override
     public String toString() {
-        return "Room: " + roomName + " | capacity: " + capacity;
+        return getIdentifier() + " | capacity: " + capacity;
     }
 }

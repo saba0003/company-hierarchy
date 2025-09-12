@@ -1,11 +1,13 @@
 package company.employee;
 
 import person.Person;
+import service.Payable;
+import service.PayrollService;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public abstract class Employee extends Person {
+public abstract class Employee extends Person implements Payable, Identifiable, Workable {
 
     private static int idCounter = 1000;
 
@@ -44,7 +46,16 @@ public abstract class Employee extends Person {
         this.role = role;
     }
 
-    public abstract void conductWork();
+    @Override
+    public BigDecimal calculatePay() {
+        PayrollService.logTransaction(this);
+        return PayrollService.processPayroll(this);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "Employee " + id;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -61,6 +72,6 @@ public abstract class Employee extends Person {
 
     @Override
     public String toString() {
-        return "Employee " + id + ": " + getFullName() + " (" + role + ") | Salary: " + salary;
+        return getIdentifier() + ": " + getFullName() + " (" + role + ") | Salary: " + salary;
     }
 }
