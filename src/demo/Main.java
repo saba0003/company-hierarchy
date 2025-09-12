@@ -58,7 +58,9 @@ public class Main {
 
         // Client & Contract
         Client client = new Client("Acme Corp", "Retail");
-        Contract contract = new Contract("C-1001", company, client, 20000);
+        Contract contract = new Contract("C-1001", client, 20000);
+        company.setContracts(new Contract[]{contract});
+
         System.out.println("Contract " + contract.getContractId() +
                 " signed with " + contract.getClient().getName() +
                 " worth $" + contract.getValue());

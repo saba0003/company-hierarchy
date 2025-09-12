@@ -1,6 +1,7 @@
 package company;
 
 import company.project.Project;
+import contract.Contract;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +16,7 @@ public class Company {
     private LocalDate foundedDate;
     private Department[] departments;
     private Project[] projects;
+    private Contract[] contracts;
     private MeetingRoom[] meetingRooms;
     private int departmentCount;
     private int totalEmployeeCount;
@@ -91,6 +93,14 @@ public class Company {
 
     public void setProjects(Project[] projects) {
         this.projects = projects;
+    }
+
+    public Contract[] getContracts() {
+        return contracts;
+    }
+
+    public void setContracts(Contract[] contracts) {
+        this.contracts = contracts;
     }
 
     public MeetingRoom[] getMeetingRooms() {
