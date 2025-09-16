@@ -1,8 +1,7 @@
 package company.employee;
 
-import person.Person;
-import service.Payable;
-import service.PayrollService;
+import utils.service.Payable;
+import utils.service.PayrollService;
 
 import java.math.BigDecimal;
 import java.util.Objects;

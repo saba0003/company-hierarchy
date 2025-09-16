@@ -2,16 +2,17 @@ package demo;
 
 import company.Company;
 import company.Department;
-import company.MeetingRoom;
+import company.meetingroom.MeetingRoom;
 import company.employee.Developer;
 import company.employee.Employee;
 import company.employee.Manager;
+import company.meetingroom.MeetingRoomSession;
 import company.project.Project;
 import company.project.Task;
 import company.project.WorkItem;
 import contract.Client;
 import contract.Contract;
-import service.PayrollService;
+import utils.service.PayrollService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -65,5 +66,9 @@ public class Main {
         System.out.println("Contract " + contract.getContractId() +
                 " signed with " + contract.getClient().getName() +
                 " worth $" + contract.getValue());
+
+        try (MeetingRoomSession session = new MeetingRoomSession(room, LocalDateTime.now())) {
+            session.holdMeeting("Quarterly Planning");
+        }
     }
 }

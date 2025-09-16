@@ -1,15 +1,17 @@
 package company;
 
+import company.meetingroom.MeetingRoom;
 import company.project.Project;
 import contract.Contract;
+import exception.CompanyFullException;
+import exception.DepartmentNotFoundException;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+
+import static utils.DateUtils.*;
 
 public class Company {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static int companyCounter;
 
     private String name;
@@ -28,26 +30,22 @@ public class Company {
 
     public Company(String name, String foundedDate) {
         this.name = name;
-        this.foundedDate = parseFoundedDate(foundedDate);
+        this.foundedDate = parseDate(foundedDate);
         this.departmentCount = 0;
         this.totalEmployeeCount = 0;
         companyCounter++;
     }
 
     public void addDepartment(Department department) {
-        if (departmentCount < departments.length) {
-            departments[departmentCount++] = department;
-            totalEmployeeCount += department.getEmployeeCount();
-        } else {
-            System.out.println("No more space for departments!");
-        }
+        if (departmentCount >= departments.length)
+            throw new CompanyFullException("No more space for departments in company " + name);
+        departments[departmentCount++] = department;
+        totalEmployeeCount += department.getEmployeeCount();
     }
 
     public void removeDepartment(Department department) {
-        if (departmentCount == 0) {
-            System.out.println("No departments to remove!");
-            return;
-        }
+        if (departmentCount == 0)
+            throw new DepartmentNotFoundException("No departments to remove in company " + name);
         for (int i = 0; i < departmentCount; i++) {
             if (department.equals(departments[i])) {
                 for (int j = i; j < departmentCount - 1; j++)
@@ -59,7 +57,7 @@ public class Company {
                 return;
             }
         }
-        System.out.println("Department not found!");
+        throw new DepartmentNotFoundException("Department " + department.getName() + " not found in company " + name);
     }
 
     public String getName() {
@@ -75,7 +73,7 @@ public class Company {
     }
 
     public void setFoundedDate(String foundedDate) {
-        this.foundedDate = parseFoundedDate(foundedDate);
+        this.foundedDate = parseDate(foundedDate);
     }
 
     public Department[] getDepartments() {
@@ -124,7 +122,7 @@ public class Company {
     }
 
     public String getFormattedFoundedDate() {
-        return foundedDate.format(FORMATTER);
+        return formatDate(foundedDate);
     }
 
     /** AUX */
@@ -134,14 +132,5 @@ public class Company {
             if (departments[i] != null)
                 total += departments[i].getEmployeeCount();
         this.totalEmployeeCount = total;
-    }
-
-    /** AUX */
-    private LocalDate parseFoundedDate(String dateStr) {
-        try {
-            return LocalDate.parse(dateStr, FORMATTER);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format, expected dd/MM/yyyy: " + dateStr);
-        }
     }
 }

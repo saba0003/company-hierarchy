@@ -1,5 +1,7 @@
 package company.project;
 
+import exception.MissingDescriptionException;
+
 import java.util.Objects;
 
 public abstract class WorkItem {
@@ -8,7 +10,8 @@ public abstract class WorkItem {
     protected boolean completed;
 
     protected WorkItem(String description) {
-        this.description = description;
+        if (description == null || description.isBlank())
+            throw new MissingDescriptionException("Work item description cannot be null or empty");
         this.completed = false;
     }
 

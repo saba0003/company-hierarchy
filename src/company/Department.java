@@ -1,6 +1,8 @@
 package company;
 
 import company.employee.Employee;
+import exception.DepartmentFullException;
+import exception.EmployeeNotFoundException;
 
 import java.util.Objects;
 
@@ -17,10 +19,9 @@ public class Department {
     }
 
     public void hireEmployee(Employee employee) {
-        if (employeeCount < employees.length)
-            employees[employeeCount++] = employee;
-        else
-            System.out.println("No more space for employees in " + name);
+        if (employeeCount >= employees.length)
+            throw new DepartmentFullException("No more space for employees in " + name);
+        employees[employeeCount++] = employee;
     }
 
     public void fireEmployee(Employee employee) {
@@ -38,7 +39,7 @@ public class Department {
                 return;
             }
         }
-        System.out.println("Employee not found!");
+        throw new EmployeeNotFoundException("Employee not found in department " + name);
     }
 
     public String getName() {

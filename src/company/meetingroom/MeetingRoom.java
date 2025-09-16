@@ -1,5 +1,6 @@
-package company;
+package company.meetingroom;
 
+import company.Schedulable;
 import company.employee.Identifiable;
 
 import java.time.LocalDateTime;

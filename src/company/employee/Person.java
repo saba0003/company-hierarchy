@@ -1,24 +1,27 @@
-package person;
+package company.employee;
 
-import company.employee.Employee;
+import exception.MissingBirthDateException;
+import exception.MissingNameException;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.time.Period;
 import java.util.Objects;
 
-public abstract class Person {
+import static utils.DateUtils.*;
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+abstract class Person {
 
     protected String firstName;
     protected String lastName;
     protected LocalDate birthDate;
 
     protected Person(String firstName, String lastName, String birthDate) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = parseBirthDate(birthDate);
+        if (firstName == null || firstName.isBlank())
+            throw new MissingNameException("First name cannot be null or blank!");
+        if (lastName == null || lastName.isBlank())
+            throw new MissingNameException("Last name cannot be null or blank!");
+        if (birthDate == null || birthDate.isBlank())
+            throw new MissingBirthDateException("Birth date cannot be null or blank!");
     }
 
     public String getFirstName() {
@@ -46,7 +49,11 @@ public abstract class Person {
     }
 
     public void setBirthDate(String birthDate) {
-        this.birthDate = parseBirthDate(birthDate);
+        this.birthDate = parseDate(birthDate);
+    }
+
+    public int getAge() {
+        return calculateAge(birthDate);
     }
 
     @Override
@@ -63,15 +70,11 @@ public abstract class Person {
 
     /** AUX */
     private String getFormattedBirthDate() {
-        return birthDate.format(FORMATTER);
+        return formatDate(birthDate);
     }
 
     /** AUX */
-    private LocalDate parseBirthDate(String dateStr) {
-        try {
-            return LocalDate.parse(dateStr, FORMATTER);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format, expected dd/MM/yyyy: " + dateStr);
-        }
+    private int calculateAge(LocalDate birthDate) {
+        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 }
