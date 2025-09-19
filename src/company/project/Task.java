@@ -1,8 +1,10 @@
 package company.project;
 
+import exception.MissingDescriptionException;
+
 public class Task extends WorkItem {
 
-    public Task(String description) {
+    public Task(String description) throws MissingDescriptionException {
         super(description);
     }
 

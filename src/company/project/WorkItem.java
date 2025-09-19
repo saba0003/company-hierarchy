@@ -9,7 +9,7 @@ public abstract class WorkItem {
     protected String description;
     protected boolean completed;
 
-    protected WorkItem(String description) {
+    protected WorkItem(String description) throws MissingDescriptionException {
         if (description == null || description.isBlank())
             throw new MissingDescriptionException("Work item description cannot be null or empty");
         this.completed = false;

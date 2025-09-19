@@ -12,6 +12,7 @@ import company.project.Task;
 import company.project.WorkItem;
 import contract.Client;
 import contract.Contract;
+import exception.MissingDescriptionException;
 import utils.service.PayrollService;
 
 import java.math.BigDecimal;
@@ -45,12 +46,15 @@ public class Main {
         Project project = new Project("New Website");
         company.setProjects(new Project[]{project});
 
-        WorkItem item1 = new Task("Design UI");
-        WorkItem item2 = new Task("Implement Backend");
-        company.getProjects()[0].setTasks(new WorkItem[]{item1, item2});
-
-        item1.markCompleted();
-        System.out.println(item1);
+        try {
+            WorkItem item1 = new Task("Design UI");
+            WorkItem item2 = new Task("Implement Backend");
+            company.getProjects()[0].setTasks(new WorkItem[]{item1, item2});
+            item1.markCompleted();
+            System.out.println(item1);
+        } catch (MissingDescriptionException e) {
+            System.err.println("Work item creation failed: " + e.getMessage());
+        }
 
         // Meeting room
         MeetingRoom room = new MeetingRoom("Conference Room A", 12);
