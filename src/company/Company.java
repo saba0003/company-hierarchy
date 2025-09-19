@@ -8,7 +8,7 @@ import exception.DepartmentNotFoundException;
 
 import java.time.LocalDate;
 
-import static utils.DateUtils.*;
+import static utils.DateTimeUtils.*;
 
 public class Company {
 

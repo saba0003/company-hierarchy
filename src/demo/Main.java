@@ -60,18 +60,17 @@ public class Main {
         MeetingRoom room = new MeetingRoom("Conference Room A", 12);
         company.setMeetingRooms(new MeetingRoom[]{room});
 
-        room.schedule(LocalDateTime.of(2025, 9, 12, 18, 30));
+        LocalDateTime meetingDateTime = LocalDateTime.of(2025, 9, 12, 18, 30);
+        room.schedule(meetingDateTime);
 
         // Client & Contract
         Client client = new Client("Acme Corp", "Retail");
         Contract contract = new Contract("C-1001", client, 20000);
         company.setContracts(new Contract[]{contract});
 
-        System.out.println("Contract " + contract.getContractId() +
-                " signed with " + contract.getClient().getName() +
-                " worth $" + contract.getValue());
+        System.out.printf("Contract %s signed with %s worth %f$%n", contract.getContractId(), contract.getClient().getName(), contract.getValue());
 
-        try (MeetingRoomSession session = new MeetingRoomSession(room, LocalDateTime.now())) {
+        try (MeetingRoomSession session = new MeetingRoomSession(room, meetingDateTime)) {
             session.holdMeeting("Quarterly Planning");
         }
     }

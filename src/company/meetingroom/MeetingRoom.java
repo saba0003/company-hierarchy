@@ -5,6 +5,8 @@ import company.employee.Identifiable;
 
 import java.time.LocalDateTime;
 
+import static utils.DateTimeUtils.*;
+
 public class MeetingRoom implements Identifiable, Schedulable {
 
     private String roomName;
@@ -38,7 +40,7 @@ public class MeetingRoom implements Identifiable, Schedulable {
 
     @Override
     public void schedule(LocalDateTime dateAndTime) {
-        System.out.println("Meeting room " + roomName + " scheduled for " + dateAndTime + " for " + capacity + " people.");
+        System.out.println("Meeting room - " + roomName + " scheduled for " + formateDateAndTime(dateAndTime) + " for " + capacity + " people.");
     }
 
     @Override

@@ -9,7 +9,7 @@ public class Contract {
     public Contract(String contractId, Client client, double value) {
         this.contractId = contractId;
         this.client = client;
-        this.value =value;
+        this.value = value;
     }
 
     public String getContractId() {
