@@ -12,6 +12,7 @@ public abstract class WorkItem {
     protected WorkItem(String description) throws MissingDescriptionException {
         if (description == null || description.isBlank())
             throw new MissingDescriptionException("Work item description cannot be null or empty");
+        this.description = description;
         this.completed = false;
     }
 
