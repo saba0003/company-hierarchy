@@ -20,11 +20,10 @@ public final class LinkedList<T> implements Iterable<T> {
     }
 
     @SafeVarargs
-    public static <T> LinkedList<T> of(T... elements) {
-        LinkedList<T> list = new LinkedList<>();
-        for (T element : elements)
-            list.add(element);
-        return list;
+    public final LinkedList<T> of(T... elements) {
+        LinkedList<T> linkedList = new LinkedList<>();
+        addAll(linkedList, elements);
+        return linkedList;
     }
 
     public T getHead() {
@@ -99,7 +98,7 @@ public final class LinkedList<T> implements Iterable<T> {
     }
 
     @SafeVarargs
-    public final boolean addAll(LinkedList<T> linkedList, T... elements) {
+    public static <T> boolean addAll(LinkedList<T> linkedList, T... elements) {
         for (T element : elements)
             linkedList.add(element);
         return true;
