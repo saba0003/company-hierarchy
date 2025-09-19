@@ -4,42 +4,37 @@ import company.employee.Employee;
 import exception.DepartmentFullException;
 import exception.EmployeeNotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Department {
 
     private String name;
-    private Employee[] employees;
-    private int employeeCount;
+    private List<Employee> employees;
+    private final int capacity;
 
-    public Department(String name, int maxEmployees) {
+    public Department(String name, int capacity) {
         this.name = name;
-        this.employees = new Employee[maxEmployees];
-        this.employeeCount = 0;
+        this.capacity = capacity;
+        this.employees = new ArrayList<>(capacity);
     }
 
     public void hireEmployee(Employee employee) {
-        if (employeeCount >= employees.length)
+        if (employees.size() >= capacity)
             throw new DepartmentFullException("No more space for employees in " + name);
-        employees[employeeCount++] = employee;
+        employees.add(employee);
     }
 
     public void fireEmployee(Employee employee) {
-        if (employeeCount == 0) {
+        if (employees.isEmpty()) {
             System.out.println("No employees to remove!");
             return;
         }
-        for (int i = 0; i < employeeCount; i++) {
-            if (employee.equals(employees[i])) {
-                for (int j = i; j < employeeCount - 1; j++)
-                    employees[j] = employees[j + 1];
-                employees[employeeCount - 1] = null;
-                employeeCount--;
-                System.out.println("Employee " + employee.getFullName() + " removed.");
-                return;
-            }
-        }
-        throw new EmployeeNotFoundException("Employee not found in department " + name);
+        if ((employees.remove(employee)))
+            System.out.println("Employee " + employee.getFullName() + " removed.");
+        else
+            throw new EmployeeNotFoundException("Employee not found in department " + name);
     }
 
     public String getName() {
@@ -50,16 +45,20 @@ public class Department {
         this.name = name;
     }
 
-    public Employee[] getEmployees() {
+    public List<Employee> getEmployees() {
         return employees;
     }
 
-    public void setEmployees(Employee[] employees) {
+    public void setEmployees(List<Employee> employees) {
         this.employees = employees;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
     public int getEmployeeCount() {
-        return employeeCount;
+        return employees.size();
     }
 
     @Override

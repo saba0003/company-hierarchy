@@ -5,8 +5,10 @@ import company.project.Project;
 import contract.Contract;
 import exception.CompanyFullException;
 import exception.DepartmentNotFoundException;
+import exception.DuplicateDepartmentException;
 
 import java.time.LocalDate;
+import java.util.*;
 
 import static utils.DateTimeUtils.*;
 
@@ -16,11 +18,10 @@ public class Company {
 
     private String name;
     private LocalDate foundedDate;
-    private Department[] departments;
-    private Project[] projects;
-    private Contract[] contracts;
-    private MeetingRoom[] meetingRooms;
-    private int departmentCount;
+    private Map<String, Department> departments;
+    private List<Project> projects;
+    private List<Contract> contracts;
+    private Set<MeetingRoom> meetingRooms;
     private int totalEmployeeCount;
 
     static {
@@ -31,33 +32,30 @@ public class Company {
     public Company(String name, String foundedDate) {
         this.name = name;
         this.foundedDate = parseDate(foundedDate);
-        this.departmentCount = 0;
+        this.departments = new HashMap<>();
         this.totalEmployeeCount = 0;
         companyCounter++;
     }
 
     public void addDepartment(Department department) {
-        if (departmentCount >= departments.length)
+        if (departments.size() >= department.getCapacity())
             throw new CompanyFullException("No more space for departments in company " + name);
-        departments[departmentCount++] = department;
+        if (departments.containsKey(department.getName()))
+            throw new DuplicateDepartmentException("Department already exists: " + department.getName());
+        departments.put(department.getName(), department);
         totalEmployeeCount += department.getEmployeeCount();
     }
 
-    public void removeDepartment(Department department) {
-        if (departmentCount == 0)
+    public Department removeDepartment(Department department) {
+        if (departments.isEmpty())
             throw new DepartmentNotFoundException("No departments to remove in company " + name);
-        for (int i = 0; i < departmentCount; i++) {
-            if (department.equals(departments[i])) {
-                for (int j = i; j < departmentCount - 1; j++)
-                    departments[j] = departments[j + 1];
-                departments[departmentCount - 1] = null;
-                departmentCount--;
-                totalEmployeeCount -= department.getEmployeeCount();
-                System.out.println("Department " + department.getName() + " removed.");
-                return;
-            }
+        if (departments.containsKey(department.getName())) {
+            totalEmployeeCount -= department.getEmployeeCount();
+            System.out.println("Department " + department.getName() + " removed.");
+            return departments.remove(department.getName());
+        } else {
+            throw new DepartmentNotFoundException("Department " + department.getName() + " not found in company " + name);
         }
-        throw new DepartmentNotFoundException("Department " + department.getName() + " not found in company " + name);
     }
 
     public String getName() {
@@ -76,41 +74,41 @@ public class Company {
         this.foundedDate = parseDate(foundedDate);
     }
 
-    public Department[] getDepartments() {
-        return departments;
+    public Department getDepartment(String name) {
+        return departments.get(name);
     }
 
-    public void setDepartments(Department[] departments) {
+    public Map<String, Department> getDepartments() {
+        return Collections.unmodifiableMap(departments);
+    }
+
+    public void setDepartments(Map<String, Department> departments) {
         this.departments = departments;
         updateTotalEmployees();
     }
 
-    public Project[] getProjects() {
+    public List<Project> getProjects() {
         return projects;
     }
 
-    public void setProjects(Project[] projects) {
+    public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
 
-    public Contract[] getContracts() {
+    public List<Contract> getContracts() {
         return contracts;
     }
 
-    public void setContracts(Contract[] contracts) {
+    public void setContracts(List<Contract> contracts) {
         this.contracts = contracts;
     }
 
-    public MeetingRoom[] getMeetingRooms() {
+    public Set<MeetingRoom> getMeetingRooms() {
         return meetingRooms;
     }
 
-    public void setMeetingRooms(MeetingRoom[] meetingRooms) {
+    public void setMeetingRooms(Set<MeetingRoom> meetingRooms) {
         this.meetingRooms = meetingRooms;
-    }
-
-    public int getDepartmentCount() {
-        return departmentCount;
     }
 
     public int getTotalEmployeeCount() {
@@ -128,9 +126,9 @@ public class Company {
     /** AUX */
     private void updateTotalEmployees() {
         int total = 0;
-        for (int i = 0; i < departmentCount; i++)
-            if (departments[i] != null)
-                total += departments[i].getEmployeeCount();
+        for (Map.Entry<String, Department> entry : departments.entrySet())
+            if (entry.getValue() != null)
+                total += entry.getValue().getEmployeeCount();
         this.totalEmployeeCount = total;
     }
 }

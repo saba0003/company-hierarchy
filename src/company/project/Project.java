@@ -1,21 +1,14 @@
 package company.project;
 
+import java.util.Set;
+
 public class Project {
 
     private String projectName;
-    private WorkItem[] items;
-    private int taskCount;
+    private Set<WorkItem> items;
 
     public Project(String projectName) {
         this.projectName = projectName;
-        this.taskCount = 0;
-    }
-
-    public void addTask(Task task) {
-        if (taskCount < items.length)
-            items[taskCount++] = task;
-        else
-            System.out.println("No more tasks can be added!");
     }
 
     public String getProjectName() {
@@ -26,15 +19,11 @@ public class Project {
         this.projectName = projectName;
     }
 
-    public WorkItem[] getWorkItems() {
+    public Set<WorkItem> getWorkItems() {
         return items;
     }
 
-    public void setTasks(WorkItem[] items) {
+    public void setTasks(Set<WorkItem> items) {
         this.items = items;
-    }
-
-    public int getTaskCount() {
-        return taskCount;
     }
 }
