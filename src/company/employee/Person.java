@@ -22,6 +22,9 @@ abstract class Person {
             throw new MissingNameException("Last name cannot be null or blank!");
         if (birthDate == null || birthDate.isBlank())
             throw new MissingBirthDateException("Birth date cannot be null or blank!");
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = parseDate(birthDate);
     }
 
     public String getFirstName() {
