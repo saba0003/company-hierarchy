@@ -2,36 +2,13 @@ package company.meetingroom;
 
 import company.Schedulable;
 import company.employee.Identifiable;
+import functionals.MeetingNotifier;
 
 import java.time.LocalDateTime;
 
 import static utils.DateTimeUtils.*;
 
-public class MeetingRoom implements Identifiable, Schedulable {
-
-    private String roomName;
-    private int capacity;
-
-    public MeetingRoom(String roomName, int capacity) {
-        this.roomName = roomName;
-        this.capacity = capacity;
-    }
-
-    public String getRoomName() {
-        return roomName;
-    }
-
-    public void setRoomName(String roomName) {
-        this.roomName = roomName;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
+public record MeetingRoom(String roomName, int capacity) implements Identifiable, Schedulable {
 
     @Override
     public String getIdentifier() {
@@ -40,7 +17,9 @@ public class MeetingRoom implements Identifiable, Schedulable {
 
     @Override
     public void schedule(LocalDateTime dateAndTime) {
-        System.out.println("Meeting room - " + roomName + " scheduled for " + formateDateAndTime(dateAndTime) + " for " + capacity + " people.");
+        MeetingNotifier notifier = room ->
+                System.out.println("Meeting room - " + room.roomName + " scheduled for " + formateDateAndTime(dateAndTime) + " for " + capacity + " people.");
+        notifier.notify(this);
     }
 
     @Override
