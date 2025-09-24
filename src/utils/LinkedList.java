@@ -1,8 +1,9 @@
 package utils;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public final class LinkedList<T> implements Iterable<T> {
 
@@ -42,6 +43,7 @@ public final class LinkedList<T> implements Iterable<T> {
         this.tail = new Node<>(tail);
     }
 
+    /** Collection methods */
     public int size() {
         return size;
     }
@@ -77,6 +79,21 @@ public final class LinkedList<T> implements Iterable<T> {
                 return data;
             }
         };
+    }
+
+    @Override
+    public void forEach(Consumer<? super T> action) {
+        Objects.requireNonNull(action);
+        Node<T> current = head;
+        while (current != null) {
+            action.accept(current.data);
+            current = current.next;
+        }
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return Spliterators.spliterator(iterator(), size, Spliterator.ORDERED);
     }
 
     public boolean add(T element) {
@@ -130,6 +147,15 @@ public final class LinkedList<T> implements Iterable<T> {
     public void clear() {
         head = tail = null;
         size = 0;
+    }
+
+    /** Stream Methods */
+    public Stream<T> stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
+
+    public Stream<T> parallelStream() {
+        return StreamSupport.stream(spliterator(), true);
     }
 
     @Override
