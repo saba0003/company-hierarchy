@@ -1,15 +1,19 @@
 package contract;
 
+import enums.ContractType;
+
 public class Contract {
 
     private String contractId;
     private Client client;
     private double value;
+    private final ContractType contractType;
 
-    public Contract(String contractId, Client client, double value) {
+    public Contract(String contractId, Client client, double value, ContractType contractType) {
         this.contractId = contractId;
         this.client = client;
         this.value = value;
+        this.contractType = contractType;
     }
 
     public String getContractId() {
@@ -34,5 +38,9 @@ public class Contract {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public ContractType getContractType() {
+        return contractType;
     }
 }

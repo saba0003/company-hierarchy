@@ -1,22 +1,25 @@
 package company.employee;
 
+import enums.EmployeeLevel;
+import enums.Stack;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Developer extends Employee {
 
-    private String stack;
+    private Stack stack;
 
-    public Developer(String firstName, String lastName, String birthDate, BigDecimal salary, String stack) {
-        super(firstName, lastName, birthDate, salary, "Developer");
+    public Developer(String firstName, String lastName, String birthDate, BigDecimal salary, Stack stack, EmployeeLevel level) {
+        super(firstName, lastName, birthDate, salary, level);
         this.stack = stack;
     }
 
-    public String getStack() {
+    public Stack getStack() {
         return stack;
     }
 
-    public void setStack(String stack) {
+    public void setStack(Stack stack) {
         this.stack = stack;
     }
 
@@ -27,14 +30,11 @@ public class Developer extends Employee {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!super.equals(obj)) return false;
-        if (!(obj instanceof Developer other)) return false;
-        return Objects.equals(stack, other.stack);
+        return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), stack);
+        return Objects.hash(super.hashCode());
     }
 }

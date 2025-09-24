@@ -12,7 +12,10 @@ import company.project.Task;
 import company.project.WorkItem;
 import contract.Client;
 import contract.Contract;
+import enums.*;
 import exception.MissingDescriptionException;
+import functionals.MeetingNotifier;
+import functionals.TaskAssigner;
 import utils.service.PayrollService;
 
 import java.math.BigDecimal;
@@ -20,6 +23,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Main {
 
@@ -28,35 +35,51 @@ public class Main {
         // Company, Departments and Employees
         Company company = new Company("TechCorp", "29/11/2010");
 
-        Department devDept = new Department("Development", 10);
-        Department hrDept = new Department("HR", 5);
+        Department devDept = new Department("Development", 10, DepartmentType.DEVELOPMENT);
+        Department hrDept = new Department("HR", 5, DepartmentType.HR);
         Map<String, Department> departments = Map.of(
                 devDept.getName(), devDept,
                 hrDept.getName(), hrDept
         );
 
-        Employee e1 = new Developer("Alice", "Liddell", "09/04/2007", BigDecimal.valueOf(8000), "Java");
-        Employee e2 = new Developer("Bob", "Marley", "03/08/2004", BigDecimal.valueOf(5000), "Python");
-        Employee e3 = new Manager("Diana", "Kruger", "24/12/1998", BigDecimal.valueOf(4000), "HR Specialist", 5);
+        Employee e1 = new Developer("Alice", "Liddell", "09/04/2007", BigDecimal.valueOf(8000), Stack.JAVA, EmployeeLevel.JUNIOR);
+        Employee e2 = new Developer("Bob", "Marley", "03/08/2004", BigDecimal.valueOf(5000), Stack.PYTHON, EmployeeLevel.SENIOR);
+        Employee e3 = new Manager("Diana", "Kruger", "24/12/1998", BigDecimal.valueOf(4000), EmployeeLevel.LEAD, 5);
 
-        departments.get(devDept.getName()).hireEmployee(e1);
-        departments.get(devDept.getName()).hireEmployee(e2);
-        departments.get(hrDept.getName()).hireEmployee(e3);
+        BiConsumer<Department, Employee> hireEmployee = Department::hireEmployee;
+        hireEmployee.accept(departments.get(devDept.getName()), e1);
+        hireEmployee.accept(departments.get(devDept.getName()), e2);
+        hireEmployee.accept(departments.get(hrDept.getName()), e3);
 
         // Payroll
-        PayrollService.processPayroll(e1);
-        PayrollService.processPayroll(e2);
-        PayrollService.processPayroll(e3);
+        Consumer<Employee> payrollProcessor = PayrollService::processPayroll;
+        payrollProcessor.accept(e1);
+        payrollProcessor.accept(e2);
+        payrollProcessor.accept(e3);
+
+        // Print employees
+        Consumer<Employee> printEmployee = e -> System.out.println("Employee: " + e.getFullName());
+        Predicate<Employee> isSenior = e -> e.getLevel() == EmployeeLevel.SENIOR;
+        Function<Employee, String> toName = Employee::getFullName;
+
+        departments.get(devDept.getName()).getEmployees().forEach(e -> {
+            printEmployee.accept(e);
+            if (isSenior.test(e))
+                System.out.println(" -> Senior detected!");
+            System.out.println(" -> Name from Function: " + toName.apply(e));
+        });
 
         // Project and tasks
-        Project project = new Project("New Website");
+        Project project = new Project("New Website", ProjectStatus.PLANNED);
         company.setProjects(List.of(project));
 
         try {
+            TaskAssigner assigner = (e, tasks) -> company.getProjects().getFirst().setTasks(Set.of(tasks));
             WorkItem item1 = new Task("Design UI");
             WorkItem item2 = new Task("Implement Backend");
-            company.getProjects().getFirst().setTasks(Set.of(item1, item2));
+            assigner.assign(project, item1, item2);
             item1.markCompleted();
+            project.setStatus(ProjectStatus.IN_PROGRESS);
             System.out.println(item1);
         } catch (MissingDescriptionException e) {
             System.err.println("Work item creation failed: " + e.getMessage());
@@ -70,12 +93,12 @@ public class Main {
 
         // Client & Contract
         Client client = new Client("Acme Corp", "Retail");
-        Contract contract = new Contract("C-1001", client, 20000);
+        Contract contract = new Contract("C-1001", client, 20000, ContractType.STRATEGIC_ALLIANCE);
         company.setContracts(List.of(contract));
 
         System.out.printf("Contract %s signed with %s worth %f$%n", contract.getContractId(), contract.getClient().getName(), contract.getValue());
 
-        try (MeetingRoomSession session = new MeetingRoomSession(company.getMeetingRooms().iterator().next(), meetingDateTime)) {
+        try (MeetingRoomSession session = new MeetingRoomSession(company.getMeetingRooms().iterator().next(), meetingDateTime, MeetingType.TRAINING)) {
             session.holdMeeting("Quarterly Planning");
         }
     }

@@ -1,5 +1,6 @@
 package company.employee;
 
+import enums.EmployeeLevel;
 import utils.service.Payable;
 import utils.service.PayrollService;
 
@@ -12,13 +13,13 @@ public abstract class Employee extends Person implements Payable, Identifiable, 
 
     protected final int id;
     protected BigDecimal salary;
-    protected String role;
+    protected EmployeeLevel level;
 
-    protected Employee(String firstName, String lastName, String birthDate, BigDecimal salary, String role) {
+    protected Employee(String firstName, String lastName, String birthDate, BigDecimal salary, EmployeeLevel level) {
         super(firstName, lastName, birthDate);
         this.id = idCounter++;
         this.salary = salary;
-        this.role = role;
+        this.level = level;
     }
 
     protected int getIdCounter() {
@@ -37,12 +38,8 @@ public abstract class Employee extends Person implements Payable, Identifiable, 
         this.salary = salary;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public EmployeeLevel getLevel() {
+        return level;
     }
 
     @Override
@@ -66,11 +63,11 @@ public abstract class Employee extends Person implements Payable, Identifiable, 
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, getFullName());
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return getIdentifier() + ": " + getFullName() + " (" + role + ") | Salary: " + salary;
+        return getIdentifier() + ": " + getFullName() + " (" + level.getDescription() + ") | Salary: " + salary;
     }
 }

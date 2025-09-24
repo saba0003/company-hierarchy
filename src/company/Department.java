@@ -1,6 +1,7 @@
 package company;
 
 import company.employee.Employee;
+import enums.DepartmentType;
 import exception.DepartmentFullException;
 import exception.EmployeeNotFoundException;
 
@@ -13,11 +14,13 @@ public class Department {
     private String name;
     private List<Employee> employees;
     private final int capacity;
+    private final DepartmentType departmentType;
 
-    public Department(String name, int capacity) {
+    public Department(String name, int capacity, DepartmentType departmentType) {
         this.name = name;
-        this.capacity = capacity;
         this.employees = new ArrayList<>(capacity);
+        this.capacity = capacity;
+        this.departmentType = departmentType;
     }
 
     public void hireEmployee(Employee employee) {
@@ -55,6 +58,10 @@ public class Department {
 
     public int getCapacity() {
         return capacity;
+    }
+
+    public DepartmentType getDepartmentType() {
+        return departmentType;
     }
 
     public int getEmployeeCount() {

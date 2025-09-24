@@ -1,5 +1,7 @@
 package company.employee;
 
+import enums.EmployeeLevel;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -7,8 +9,8 @@ public class Manager extends Employee implements Reportable {
 
     private int teamSize;
 
-    public Manager(String firstName, String lastName, String birthDate, BigDecimal salary, String role, int teamSize) {
-        super(firstName, lastName, birthDate, salary, role);
+    public Manager(String firstName, String lastName, String birthDate, BigDecimal salary, EmployeeLevel level, int teamSize) {
+        super(firstName, lastName, birthDate, salary, level);
         this.teamSize = teamSize;
     }
 
@@ -32,14 +34,11 @@ public class Manager extends Employee implements Reportable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!super.equals(obj)) return false;
-        if (!(obj instanceof Manager other)) return false;
-        return Objects.equals(teamSize, other.teamSize);
+        return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), teamSize);
+        return Objects.hash(super.hashCode());
     }
 }
