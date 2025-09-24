@@ -14,7 +14,7 @@ import contract.Client;
 import contract.Contract;
 import enums.*;
 import exception.MissingDescriptionException;
-import functionals.MeetingNotifier;
+import functionals.MeetingScheduler;
 import functionals.TaskAssigner;
 import utils.service.PayrollService;
 
@@ -89,7 +89,9 @@ public class Main {
         company.setMeetingRooms(Set.of(new MeetingRoom("Conference Room A", 12)));
 
         LocalDateTime meetingDateTime = LocalDateTime.of(2025, 9, 12, 18, 30);
-        company.getMeetingRooms().iterator().next().schedule(meetingDateTime);
+
+        MeetingScheduler scheduler = MeetingRoom::schedule;
+        scheduler.schedule(company.getMeetingRooms().iterator().next(), meetingDateTime);
 
         // Client & Contract
         Client client = new Client("Acme Corp", "Retail");
