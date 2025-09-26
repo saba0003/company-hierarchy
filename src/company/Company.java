@@ -6,6 +6,7 @@ import contract.Contract;
 import exception.CompanyFullException;
 import exception.DepartmentNotFoundException;
 import exception.DuplicateDepartmentException;
+import utils.LinkedList;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -19,7 +20,7 @@ public class Company {
     private String name;
     private LocalDate foundedDate;
     private Map<String, Department> departments;
-    private List<Project> projects;
+    private LinkedList<Project> projects;
     private List<Contract> contracts;
     private Set<MeetingRoom> meetingRooms;
     private int totalEmployeeCount;
@@ -87,11 +88,11 @@ public class Company {
         updateTotalEmployees();
     }
 
-    public List<Project> getProjects() {
+    public LinkedList<Project> getProjects() {
         return projects;
     }
 
-    public void setProjects(List<Project> projects) {
+    public void setProjects(LinkedList<Project> projects) {
         this.projects = projects;
     }
 
