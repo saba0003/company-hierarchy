@@ -83,6 +83,9 @@ public class Main {
             System.out.println(item1);
         } catch (MissingDescriptionException e) {
             System.err.println("Work item creation failed: " + e.getMessage());
+        } finally {
+            System.out.println("Final project state: " + project.getStatus());
+            System.out.println("Assigned tasks: " + project.getWorkItems());
         }
 
         // Meeting room
