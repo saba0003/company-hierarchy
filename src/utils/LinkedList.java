@@ -2,6 +2,7 @@ package utils;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -21,7 +22,7 @@ public final class LinkedList<T> implements Iterable<T> {
     }
 
     @SafeVarargs
-    public final LinkedList<T> of(T... elements) {
+    public static <T> LinkedList<T> of(T... elements) {
         LinkedList<T> linkedList = new LinkedList<>();
         addAll(linkedList, elements);
         return linkedList;
@@ -32,7 +33,12 @@ public final class LinkedList<T> implements Iterable<T> {
     }
 
     public void setHead(T head) {
-        this.head = new Node<>(head);
+        if (isEmpty()) {
+            this.head = tail = new Node<>(head);
+            increaseSize();
+        } else {
+            this.head.data = head;
+        }
     }
 
     public T getTail() {
@@ -40,7 +46,10 @@ public final class LinkedList<T> implements Iterable<T> {
     }
 
     public void setTail(T tail) {
-        this.tail = new Node<>(tail);
+        if (this.tail == null)
+            setHead(tail);
+        else
+            this.tail.data = tail;
     }
 
     /** Collection methods */
@@ -83,7 +92,6 @@ public final class LinkedList<T> implements Iterable<T> {
 
     @Override
     public void forEach(Consumer<? super T> action) {
-        Objects.requireNonNull(action);
         Node<T> current = head;
         while (current != null) {
             action.accept(current.data);
@@ -98,7 +106,7 @@ public final class LinkedList<T> implements Iterable<T> {
 
     public boolean add(T element) {
         Node<T> node = new Node<>(element);
-        if (head == null)
+        if (isEmpty())
             head = node;
         else
             tail.next = node;
@@ -144,6 +152,22 @@ public final class LinkedList<T> implements Iterable<T> {
         return false;
     }
 
+    public boolean removeIf(Predicate<? super T> filter) {
+        LinkedList<T> filtered = new LinkedList<>();
+        this.stream()
+            .filter(filter.negate())
+            .forEach(filtered::add);
+
+        if (filtered.size == this.size)
+            return false;
+
+        this.head = filtered.head;
+        this.tail = filtered.tail;
+        this.size = filtered.size;
+
+        return true;
+    }
+
     public void clear() {
         head = tail = null;
         size = 0;
@@ -185,7 +209,7 @@ public final class LinkedList<T> implements Iterable<T> {
 
     private static class Node<T> {
 
-        private final T data;
+        private T data;
         private Node<T> next;
 
         public Node(T data) {
