@@ -3,6 +3,7 @@ package utils.service;
 import company.employee.Employee;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 public final class PayrollService {
@@ -26,6 +27,10 @@ public final class PayrollService {
         BigDecimal net = gross.subtract(tax);
         System.out.println("Payroll processed for " + employee.getFullName() + " | Gross: " + gross + " | Net: " + net);
         return net;
+    }
+
+    public static void processPayroll(List<Employee> employees) {
+        employees.forEach(PayrollService::processPayroll);
     }
 
     public static double getTaxRate() {
