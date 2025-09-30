@@ -126,10 +126,9 @@ public class Company {
 
     /** AUX */
     private void updateTotalEmployees() {
-        int total = 0;
-        for (Map.Entry<String, Department> entry : departments.entrySet())
-            if (entry.getValue() != null)
-                total += entry.getValue().getEmployeeCount();
-        this.totalEmployeeCount = total;
+        this.totalEmployeeCount = departments.values().stream()
+                .filter(Objects::nonNull)
+                .mapToInt(Department::getEmployeeCount)
+                .sum();
     }
 }

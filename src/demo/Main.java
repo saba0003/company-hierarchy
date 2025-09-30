@@ -17,8 +17,10 @@ import exception.MissingDescriptionException;
 import functionals.MeetingScheduler;
 import functionals.TaskAssigner;
 import utils.LinkedList;
+import utils.annotations.CustomAuditable;
 import utils.service.PayrollService;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,6 +51,8 @@ public class Main {
             hireEmployee.accept(departments.get(devDept.getName()), e1);
             hireEmployee.accept(departments.get(devDept.getName()), e2);
             hireEmployee.accept(departments.get(hrDept.getName()), e3);
+
+            company.setDepartments(departments);
         };
 
         // Payroll
@@ -105,17 +109,85 @@ public class Main {
 
         // Client & Contract
         Runnable clientAndContractRunnable = () -> {
-            Client client = new Client("Acme Corp", "Retail");
-            Contract contract = new Contract("C-1001", client, 20000, ContractType.STRATEGIC_ALLIANCE);
-            company.setContracts(List.of(contract));
+            try {
+                Class<Client> clientClass = Client.class;
+                Client client = clientClass
+                        .getConstructor(String.class, String.class)
+                        .newInstance("Acme Corp", "Retail");
 
-            System.out.printf("Contract %s signed with %s worth %f$%n", contract.getContractId(), contract.getClient().getName(), contract.getValue());
+                // --- Handle @CustomAuditable methods dynamically ---
+                for (Method method : clientClass.getDeclaredMethods()) {
+                    if (method.isAnnotationPresent(CustomAuditable.class)) {
+                        CustomAuditable ann = method.getAnnotation(CustomAuditable.class);
 
-            try (MeetingRoomSession session = new MeetingRoomSession(
-                    company.getMeetingRooms().iterator().next(),
-                    LocalDateTime.of(2025, 9, 12, 18, 30),
-                    MeetingType.TRAINING)) {
-                session.holdMeeting("Quarterly Planning");
+                        // Just for demo: call the setter with some test value
+                        if (method.getName().equals("setName")) {
+                            System.out.printf("Audit -> category: %s | invoking %s with arg: %s%n",
+                                    ann.value(), method.getName(), "Acme Inc");
+                            method.invoke(client, "Acme Inc");
+                        } else if (method.getName().equals("setIndustry")) {
+                            System.out.printf("Audit -> category: %s | invoking %s with arg: %s%n",
+                                    ann.value(), method.getName(), "Technology");
+                            method.invoke(client, "Technology");
+                        }
+                    }
+                }
+
+                // --- Create Contract instance via reflection ---
+                Class<Contract> contractClass = Contract.class;
+                Class<ContractType> contractTypeClass = ContractType.class;
+
+                ContractType contractType = Enum.valueOf(contractTypeClass, "STRATEGIC_ALLIANCE");
+
+                Contract contract = contractClass
+                        .getConstructor(String.class, clientClass, double.class, contractTypeClass)
+                        .newInstance("C-1001", client, 20000.0, contractType);
+
+                Class<Company> companyClass = Company.class;
+                companyClass
+                        .getMethod("setContracts", List.class)
+                        .invoke(company, List.of(contract));
+
+                Method getContractId = contractClass.getMethod("getContractId");
+                Method getClient = contractClass.getMethod("getClient");
+                Method getName = clientClass.getMethod("getName");
+                Method getValue = contractClass.getMethod("getValue");
+
+                String contractId = (String) getContractId.invoke(contract);
+                Object contractClient = getClient.invoke(contract);
+                String clientName = (String) getName.invoke(contractClient);
+                Double value = (Double) getValue.invoke(contract);
+
+                System.out.printf("Contract %s signed with %s worth %f$%n",
+                        contractId, clientName, value);
+
+                Class<MeetingRoomSession> meetingRoomSessionClass = MeetingRoomSession.class;
+                Class<MeetingType> meetingTypeClass = MeetingType.class;
+
+                MeetingType meetingType = Enum.valueOf(meetingTypeClass, "TRAINING");
+
+                MeetingRoom meetingRoom = company.getMeetingRooms().iterator().next();
+
+                MeetingRoomSession session = meetingRoomSessionClass
+                        .getConstructor(
+                                meetingRoom.getClass(),
+                                LocalDateTime.class,
+                                meetingTypeClass
+                        )
+                        .newInstance(
+                                meetingRoom,
+                                LocalDateTime.of(2025, 9, 12, 18, 30),
+                                meetingType
+                        );
+
+                Method holdMeeting = meetingRoomSessionClass.getMethod("holdMeeting", String.class);
+                holdMeeting.invoke(session, "Quarterly Planning");
+
+                Method close = meetingRoomSessionClass.getMethod("close");
+                close.invoke(session);
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         };
 

@@ -62,10 +62,7 @@ public final class LinkedList<T> implements Iterable<T> {
     }
 
     public boolean contains(Object o) {
-        for (T e : this)
-            if (Objects.equals(e, o))
-                return true;
-        return false;
+        return stream().anyMatch(e -> Objects.equals(e, o));
     }
 
     @Override
@@ -117,15 +114,13 @@ public final class LinkedList<T> implements Iterable<T> {
 
     @SafeVarargs
     public final boolean addAll(T... elements) {
-        for (T element : elements)
-            add(element);
+        Stream.of(elements).forEach(this::add);
         return true;
     }
 
     @SafeVarargs
     public static <T> boolean addAll(LinkedList<T> linkedList, T... elements) {
-        for (T element : elements)
-            linkedList.add(element);
+        Stream.of(elements).forEach(linkedList::add);
         return true;
     }
 

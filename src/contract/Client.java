@@ -1,5 +1,7 @@
 package contract;
 
+import utils.annotations.CustomAuditable;
+
 public class Client {
 
     private String name;
@@ -14,6 +16,7 @@ public class Client {
         return name;
     }
 
+    @CustomAuditable("security")
     public void setName(String name) {
         this.name = name;
     }
@@ -22,6 +25,7 @@ public class Client {
         return industry;
     }
 
+    @CustomAuditable("business")
     public void setIndustry(String industry) {
         this.industry = industry;
     }
