@@ -5,5 +5,7 @@ import com.solvd.companyhierarchy.company.project.WorkItem;
 
 @FunctionalInterface
 public interface TaskAssigner {
+
     void assign(Project project, WorkItem... tasks);
+
 }
