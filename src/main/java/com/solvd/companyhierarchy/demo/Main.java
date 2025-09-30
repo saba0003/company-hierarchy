@@ -14,7 +14,6 @@ import com.solvd.companyhierarchy.contract.Client;
 import com.solvd.companyhierarchy.contract.Contract;
 import com.solvd.companyhierarchy.enums.*;
 import com.solvd.companyhierarchy.exception.MissingDescriptionException;
-import com.solvd.companyhierarchy.functionals.MeetingScheduler;
 import com.solvd.companyhierarchy.functionals.TaskAssigner;
 import com.solvd.companyhierarchy.utils.LinkedList;
 import com.solvd.companyhierarchy.utils.annotations.CustomAuditable;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -65,16 +65,17 @@ public class Main {
 
         // Print employees
         Runnable printer = () -> {
-            Consumer<Employee> printEmployee = e -> System.out.println("Employee: " + e.getFullName());
+            Consumer<String> printSeniors = fullName -> System.out.println("Senior Employee: " + fullName);
             Predicate<Employee> isSenior = e -> e.getLevel() == EmployeeLevel.SENIOR;
             Function<Employee, String> toName = Employee::getFullName;
 
-            company.getDepartments().get("Development").getEmployees().forEach(e -> {
-                printEmployee.accept(e);
-                if (isSenior.test(e))
-                    System.out.println(" -> Senior detected!");
-                System.out.println(" -> Name from Function: " + toName.apply(e));
-            });
+            List<String> seniorsWithFullNames = company.getDepartments().values().stream()
+                    .flatMap(dep -> dep.getEmployees().stream())
+                    .filter(isSenior)
+                    .map(toName)
+                    .collect(Collectors.toList());
+
+            seniorsWithFullNames.forEach(printSeniors);
         };
 
         // Project and tasks
@@ -101,10 +102,9 @@ public class Main {
 
         // Meeting room
         Runnable meetingRoomRunnable = () -> {
-            company.setMeetingRooms(Set.of(new MeetingRoom("Conference Room A", 12)));
-            MeetingScheduler scheduler = MeetingRoom::schedule;
-            scheduler.schedule(company.getMeetingRooms().iterator().next(),
-                    LocalDateTime.of(2025, 9, 12, 18, 30));
+            MeetingRoom meetingRoom = new MeetingRoom("Conference Room A", 12);
+            company.setMeetingRooms(Set.of(meetingRoom));
+            meetingRoom.schedule(LocalDateTime.of(2025, 9, 12, 18, 30));
         };
 
         // Client & Contract
@@ -115,12 +115,10 @@ public class Main {
                         .getConstructor(String.class, String.class)
                         .newInstance("Acme Corp", "Retail");
 
-                // --- Handle @CustomAuditable methods dynamically ---
                 for (Method method : clientClass.getDeclaredMethods()) {
                     if (method.isAnnotationPresent(CustomAuditable.class)) {
                         CustomAuditable ann = method.getAnnotation(CustomAuditable.class);
 
-                        // Just for demo: call the setter with some test value
                         if (method.getName().equals("setName")) {
                             System.out.printf("Audit -> category: %s | invoking %s with arg: %s%n",
                                     ann.value(), method.getName(), "Acme Inc");
@@ -133,7 +131,6 @@ public class Main {
                     }
                 }
 
-                // --- Create Contract instance via reflection ---
                 Class<Contract> contractClass = Contract.class;
                 Class<ContractType> contractTypeClass = ContractType.class;
 
