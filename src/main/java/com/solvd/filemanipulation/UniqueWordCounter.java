@@ -1,4 +1,4 @@
-package com.solvd.companyhierarchy.demo;
+package com.solvd.filemanipulation;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
