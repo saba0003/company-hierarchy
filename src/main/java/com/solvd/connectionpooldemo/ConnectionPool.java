@@ -10,8 +10,8 @@ public class ConnectionPool {
 
     private static final Logger log = LogManager.getLogger(ConnectionPool.class);
 
-    private static volatile ConnectionPool instance; // needed for double-checked locking
-    private final BlockingQueue<AccountDao> pool;    // no volatile needed!
+    private static volatile ConnectionPool instance;
+    private final BlockingQueue<AccountDao> pool;
 
     private ConnectionPool(int size) {
         pool = new ArrayBlockingQueue<>(size);
@@ -31,13 +31,13 @@ public class ConnectionPool {
     }
 
     public AccountDao getConnection() throws InterruptedException {
-        AccountDao connection = pool.take(); // waits if no connection
+        AccountDao connection = pool.take();
         log.info("{} acquired {}", Thread.currentThread().getName(), connection);
         return connection;
     }
 
     public void releaseConnection(AccountDao connection) throws InterruptedException {
-        pool.put(connection); // puts it back, possibly unblocking waiting threads
+        pool.put(connection);
         log.info("{} released {}", Thread.currentThread().getName(), connection);
     }
 

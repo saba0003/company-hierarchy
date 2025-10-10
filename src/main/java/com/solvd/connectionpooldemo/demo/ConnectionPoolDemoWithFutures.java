@@ -20,26 +20,23 @@ public class ConnectionPoolDemoWithFutures {
             try {
                 AccountDao conn = pool.getConnection();
 
-                // First async task: read operation
                 CompletableFuture<Void> readFuture = CompletableFuture.runAsync(() -> {
                     conn.read();
                     log.info("{} completed async read task", Thread.currentThread().getName());
                 });
 
-                // Second async task: mock some computation
                 CompletableFuture<Void> computeFuture = CompletableFuture.runAsync(() -> {
                     try {
-                        Thread.sleep(500); // simulate some async work
+                        Thread.sleep(500);
                         log.info("{} completed async compute task", Thread.currentThread().getName());
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
                 });
 
-                // Wait for both futures to complete before releasing connection
                 CompletableFuture.allOf(readFuture, computeFuture).join();
 
-                Thread.sleep(1000); // simulate main work
+                Thread.sleep(1000);
                 pool.releaseConnection(conn);
 
             } catch (InterruptedException e) {
@@ -47,7 +44,6 @@ public class ConnectionPoolDemoWithFutures {
             }
         };
 
-        // Create 7 threads -> 2 will wait for available connections
         for (int i = 1; i < 8; i++) {
             Thread thread = new Thread(task, "Worker-" + i);
             thread.start();

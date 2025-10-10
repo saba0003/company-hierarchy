@@ -24,7 +24,7 @@ public class ExecutorServiceDemo {
             try {
                 AccountDao conn = pool.getConnection();
                 conn.update();
-                Thread.sleep(1500); // simulate DB ops
+                Thread.sleep(1500);
                 pool.releaseConnection(conn);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
