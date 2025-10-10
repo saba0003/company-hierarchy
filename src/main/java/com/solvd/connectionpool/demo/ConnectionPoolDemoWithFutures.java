@@ -1,7 +1,7 @@
-package com.solvd.connectionpooldemo.demo;
+package com.solvd.connectionpool.demo;
 
-import com.solvd.connectionpooldemo.AccountDao;
-import com.solvd.connectionpooldemo.ConnectionPool;
+import com.solvd.connectionpool.AccountDao;
+import com.solvd.connectionpool.ConnectionPool;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

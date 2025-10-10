@@ -1,4 +1,4 @@
-package com.solvd.connectionpooldemo;
+package com.solvd.connectionpool;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
