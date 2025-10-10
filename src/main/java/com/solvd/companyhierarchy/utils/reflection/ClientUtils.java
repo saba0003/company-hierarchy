@@ -1,6 +1,8 @@
 package com.solvd.companyhierarchy.utils.reflection;
 
 import com.solvd.companyhierarchy.contract.Client;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -9,32 +11,34 @@ import java.lang.reflect.Modifier;
 
 public class ClientUtils {
 
+    private static final Logger log = LogManager.getLogger(ClientUtils.class);
+
     public static void main(String[] args) throws Exception {
 
         Class<?> clazz = Client.class;
 
         // --- Inspect fields ---
-        System.out.println("Fields:");
+        log.info("Fields:");
         for (Field field : clazz.getDeclaredFields()) {
-            System.out.printf("  %s %s %s%n",
+            log.info("  {} {} {}\n",
                     Modifier.toString(field.getModifiers()),
                     field.getType().getSimpleName(),
                     field.getName());
         }
 
         // --- Inspect constructors ---
-        System.out.println("\nConstructors:");
+        log.info("\nConstructors:");
         for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            System.out.printf("  %s %s(%s)%n",
+            log.info("  {} {}({})\n",
                     Modifier.toString(constructor.getModifiers()),
                     constructor.getName(),
                     getParams(constructor.getParameterTypes()));
         }
 
         // --- Inspect methods ---
-        System.out.println("\nMethods:");
+        log.info("\nMethods:");
         for (Method method : clazz.getDeclaredMethods()) {
-            System.out.printf("  %s %s %s(%s)%n",
+            log.info("  {} {} {}({})\n",
                     Modifier.toString(method.getModifiers()),
                     method.getReturnType().getSimpleName(),
                     method.getName(),
@@ -53,7 +57,7 @@ public class ClientUtils {
         Method getIndustry = clazz.getMethod("getIndustry");
         Object industryValue = getIndustry.invoke(client);
 
-        System.out.println("\nReflection call result: Industry = " + industryValue);
+        log.info("\nReflection call result: Industry = {}", industryValue);
     }
 
     private static String getParams(Class<?>[] paramTypes) {

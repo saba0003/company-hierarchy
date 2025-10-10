@@ -1,6 +1,8 @@
 package com.solvd.companyhierarchy.utils.service;
 
 import com.solvd.companyhierarchy.company.employee.Employee;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -8,12 +10,14 @@ import java.util.function.UnaryOperator;
 
 public final class PayrollService {
 
+    private static final Logger log = LogManager.getLogger(PayrollService.class);
+
     private static final String CURRENCY = "USD";
 
     private static double taxRate = 0.1; // 10% tax
 
     static {
-        System.out.println("PayrollService loaded with default tax rate " + taxRate * 100 + "%");
+        log.info("PayrollService loaded with default tax rate {}%", taxRate * 100);
     }
 
     private PayrollService() {
@@ -25,7 +29,7 @@ public final class PayrollService {
         BigDecimal gross = employee.getSalary();
         BigDecimal tax = calculateTax.apply(gross);
         BigDecimal net = gross.subtract(tax);
-        System.out.println("Payroll processed for " + employee.getFullName() + " | Gross: " + gross + " | Net: " + net);
+        log.info("Payroll processed for {} | Gross: {} | Net: {}", employee.getFullName(), gross,  net);
         return net;
     }
 
@@ -42,6 +46,6 @@ public final class PayrollService {
     }
 
     public static void logTransaction(Payable payable) {
-        System.out.println("Transaction logged for: " + payable.calculatePay() + " " + CURRENCY);
+        log.info("Transaction logged for: {} {}", payable.calculatePay(), CURRENCY);
     }
 }

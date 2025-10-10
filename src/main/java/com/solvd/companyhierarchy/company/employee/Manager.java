@@ -1,11 +1,15 @@
 package com.solvd.companyhierarchy.company.employee;
 
 import com.solvd.companyhierarchy.enums.EmployeeLevel;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Manager extends Employee implements Reportable {
+
+    private static final Logger log = LogManager.getLogger(Manager.class);
 
     private int teamSize;
 
@@ -24,7 +28,7 @@ public class Manager extends Employee implements Reportable {
 
     @Override
     public void conductWork() {
-        System.out.println(getFullName() + " is yelling at a team of " + teamSize + " people");
+        log.info("{} is yelling at a team of {} people", getFullName(), teamSize);
     }
 
     @Override

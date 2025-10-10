@@ -7,6 +7,8 @@ import com.solvd.companyhierarchy.exception.CompanyFullException;
 import com.solvd.companyhierarchy.exception.DepartmentNotFoundException;
 import com.solvd.companyhierarchy.exception.DuplicateDepartmentException;
 import com.solvd.companyhierarchy.utils.LinkedList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -14,6 +16,8 @@ import java.util.*;
 import static com.solvd.companyhierarchy.utils.DateTimeUtils.*;
 
 public class Company {
+
+    private static final Logger log = LogManager.getLogger(Company.class);
 
     private static int companyCounter;
 
@@ -52,7 +56,7 @@ public class Company {
             throw new DepartmentNotFoundException("No departments to remove in company " + name);
         if (departments.containsKey(department.getName())) {
             totalEmployeeCount -= department.getEmployeeCount();
-            System.out.println("Department " + department.getName() + " removed.");
+            log.info("Department {} removed.", department.getName());
             return departments.remove(department.getName());
         } else {
             throw new DepartmentNotFoundException("Department " + department.getName() + " not found in company " + name);

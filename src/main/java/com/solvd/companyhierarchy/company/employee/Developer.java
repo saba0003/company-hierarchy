@@ -2,11 +2,15 @@ package com.solvd.companyhierarchy.company.employee;
 
 import com.solvd.companyhierarchy.enums.EmployeeLevel;
 import com.solvd.companyhierarchy.enums.Stack;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Developer extends Employee {
+
+    private static final Logger log = LogManager.getLogger(Developer.class);
 
     private Stack stack;
 
@@ -25,7 +29,7 @@ public class Developer extends Employee {
 
     @Override
     public void conductWork() {
-        System.out.println(getFullName() + " is coding in " + stack);
+        log.info("{} is coding in {}", getFullName(), stack);
     }
 
     @Override

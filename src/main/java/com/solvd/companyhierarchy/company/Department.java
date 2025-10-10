@@ -4,12 +4,16 @@ import com.solvd.companyhierarchy.company.employee.Employee;
 import com.solvd.companyhierarchy.enums.DepartmentType;
 import com.solvd.companyhierarchy.exception.DepartmentFullException;
 import com.solvd.companyhierarchy.exception.EmployeeNotFoundException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Department {
+
+    private static final Logger log = LogManager.getLogger(Department.class);
 
     private String name;
     private List<Employee> employees;
@@ -31,11 +35,11 @@ public class Department {
 
     public void fireEmployee(Employee employee) {
         if (employees.isEmpty()) {
-            System.out.println("No employees to remove!");
+            log.info("No employees to remove!");
             return;
         }
         if ((employees.remove(employee)))
-            System.out.println("Employee " + employee.getFullName() + " removed.");
+            log.info("Employee {} removed.", employee.getFullName());
         else
             throw new EmployeeNotFoundException("Employee not found in department " + name);
     }

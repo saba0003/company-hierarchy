@@ -18,19 +18,24 @@ import com.solvd.companyhierarchy.functionals.TaskAssigner;
 import com.solvd.companyhierarchy.utils.LinkedList;
 import com.solvd.companyhierarchy.utils.annotations.CustomAuditable;
 import com.solvd.companyhierarchy.utils.service.PayrollService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 public class Main {
 
+    private static final Logger log = LogManager.getLogger(Main.class);
+
     public static void main(String[] args) {
+
 
         Company company = new Company("TechCorp", "29/11/2010");
 
@@ -65,7 +70,7 @@ public class Main {
 
         // Print employees
         Runnable printer = () -> {
-            Consumer<String> printSeniors = fullName -> System.out.println("Senior Employee: " + fullName);
+            Consumer<String> printSeniors = fullName -> log.info("Senior Employee: {}", fullName);
             Predicate<Employee> isSenior = e -> e.getLevel() == EmployeeLevel.SENIOR;
             Function<Employee, String> toName = Employee::getFullName;
 
@@ -73,7 +78,7 @@ public class Main {
                     .flatMap(dep -> dep.getEmployees().stream())
                     .filter(isSenior)
                     .map(toName)
-                    .collect(Collectors.toList());
+                    .toList();
 
             seniorsWithFullNames.forEach(printSeniors);
         };
@@ -91,12 +96,12 @@ public class Main {
                 assigner.assign(websiteProject, item1, item2);
                 item1.markCompleted();
                 websiteProject.setStatus(ProjectStatus.IN_PROGRESS);
-                System.out.println(item1);
+                log.info(item1);
             } catch (MissingDescriptionException e) {
-                System.err.println("Work item creation failed: " + e.getMessage());
+                log.error("Work item creation failed: {}", e.getMessage());
             } finally {
-                System.out.println("Final project state: " + websiteProject.getStatus());
-                System.out.println("Assigned tasks: " + websiteProject.getWorkItems());
+                log.info("Final project state: {}", websiteProject.getStatus());
+                log.info("Assigned tasks: {}", websiteProject.getWorkItems());
             }
         };
 
@@ -118,16 +123,12 @@ public class Main {
                 for (Method method : clientClass.getDeclaredMethods()) {
                     if (method.isAnnotationPresent(CustomAuditable.class)) {
                         CustomAuditable ann = method.getAnnotation(CustomAuditable.class);
-
-                        if (method.getName().equals("setName")) {
-                            System.out.printf("Audit -> category: %s | invoking %s with arg: %s%n",
-                                    ann.value(), method.getName(), "Acme Inc");
+                        log.info("Audit -> category: {} | invoking {} with arg: {}",
+                                ann.value(), method.getName(), "Acme Inc");
+                        if (method.getName().equals("setName"))
                             method.invoke(client, "Acme Inc");
-                        } else if (method.getName().equals("setIndustry")) {
-                            System.out.printf("Audit -> category: %s | invoking %s with arg: %s%n",
-                                    ann.value(), method.getName(), "Technology");
+                        else if (method.getName().equals("setIndustry"))
                             method.invoke(client, "Technology");
-                        }
                     }
                 }
 
@@ -141,9 +142,7 @@ public class Main {
                         .newInstance("C-1001", client, 20000.0, contractType);
 
                 Class<Company> companyClass = Company.class;
-                companyClass
-                        .getMethod("setContracts", List.class)
-                        .invoke(company, List.of(contract));
+                companyClass.getMethod("setContracts", List.class).invoke(company, List.of(contract));
 
                 Method getContractId = contractClass.getMethod("getContractId");
                 Method getClient = contractClass.getMethod("getClient");
@@ -155,8 +154,7 @@ public class Main {
                 String clientName = (String) getName.invoke(contractClient);
                 Double value = (Double) getValue.invoke(contract);
 
-                System.out.printf("Contract %s signed with %s worth %f$%n",
-                        contractId, clientName, value);
+                log.info("Contract {} signed with {} worth {}$", contractId, clientName, value);
 
                 Class<MeetingRoomSession> meetingRoomSessionClass = MeetingRoomSession.class;
                 Class<MeetingType> meetingTypeClass = MeetingType.class;
@@ -184,7 +182,7 @@ public class Main {
                 close.invoke(session);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(Arrays.toString(e.getStackTrace()));
             }
         };
 
