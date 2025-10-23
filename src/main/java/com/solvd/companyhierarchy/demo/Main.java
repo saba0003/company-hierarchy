@@ -2,6 +2,7 @@ package com.solvd.companyhierarchy.demo;
 
 import com.solvd.companyhierarchy.company.Company;
 import com.solvd.companyhierarchy.company.Department;
+import com.solvd.companyhierarchy.company.meetingroom.MeetingProcessor;
 import com.solvd.companyhierarchy.company.meetingroom.MeetingRoom;
 import com.solvd.companyhierarchy.company.employee.Developer;
 import com.solvd.companyhierarchy.company.employee.Employee;
@@ -107,9 +108,12 @@ public class Main {
 
         // Meeting room
         Runnable meetingRoomRunnable = () -> {
-            MeetingRoom meetingRoom = new MeetingRoom("Conference Room A", 12);
-            company.setMeetingRooms(Set.of(meetingRoom));
-            meetingRoom.schedule(LocalDateTime.of(2025, 9, 12, 18, 30));
+            MeetingProcessor processor = new MeetingProcessor();
+            MeetingRoom room = new MeetingRoom("Conference Room", 12);
+
+            processor.processMeeting(room, LocalDateTime.now().plusHours(2),
+                    (r, dt) -> log.info("Lambda received: {} at {}", r.getIdentifier(), dt)
+            );
         };
 
         // Client & Contract
